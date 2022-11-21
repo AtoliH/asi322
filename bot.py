@@ -9,6 +9,8 @@ async def handler(websocket):
 
 
 async def main() -> None:
+    topic = 
+
     channel = "scream"
     account = "asi322"
     password = "oauth:c6gx9m317pcrgro5hkyj0x4c1hwrqo"
