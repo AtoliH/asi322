@@ -9,6 +9,7 @@ Python modules
 pip install kafka-python
 pip install websockets
 pip install elasticsearch
+pip install vaderSentiment
 ```
 Elastic Stack
 ```
