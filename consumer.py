@@ -2,11 +2,13 @@ from kafka import KafkaConsumer
 from elasticsearch import ElasticSearch
 import json
 import re
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 es = ElasticSearch()
 topic = "asi322"
 liste_file = "badwords.txt"
 consumer = KafkaConsumer(topic, bootstrap_servers=['localhost:9092'])
+analyzer=SentimentIntensityAnalyzer()
 
 def send_to_elastic(message):
     resp = es.index(index="asi322", document=message)
@@ -23,6 +25,8 @@ if __name__ == "__main__":
                 if re.compile(r'\b({0})\b'.format(word), flags=re.IGNORECASE).search(msg['message']):
                     msg['badwords'] += 1
                     print(word)
-            print(msg)
 
+            vs=analyzer.polarity_scores(msg['message'])
+            msg['vs']=vs
             send_to_elastic(msg)
+            print(msg)
