@@ -24,21 +24,30 @@ def parsemsg(s):
 
 async def handler(websocket):
     topic = "asi322"
-    producer = KafkaProducer(bootstrap_servers='localhost:9092')
-    while True:
-        rawIrcMessage = (await websocket.recv()).strip()
-        rawMessages = rawIrcMessage.split('\r\n')
-        for rawMessage in rawMessages:
-            message = parsemsg(rawMessage)
-            print(message)
-            if message[1] == 'PRIVMSG':
-                producer.send(topic, bytes(message[2][1], 'utf-8'))
+    with open("badwords.txt") as badwordsFile:
+        badwords = badwordsFile.read().splitlines()
+        producer = KafkaProducer(bootstrap_servers='localhost:9092')
+        while True:
+            rawIrcMessage = (await websocket.recv()).strip()
+            rawMessages = rawIrcMessage.split('\r\n')
+            for rawMessage in rawMessages:
+                message = parsemsg(rawMessage)
+                print(message)
+                if message[1] == 'PRIVMSG':
+                    chatUser = message[2][0]
+                    chatMessage = message[2][1]
+                    badRate = 0
+                    for badword in badwords:
+                        if badword in chatMessage:
+                            badRate += 1
+
+                    producer.send(topic, bytes(chatUser + " # " + chatMessage + " # " + str(badRate), 'utf-8'))
 
 
 async def main() -> None:
     channel = "fire937"
     account = "asi322"
-    password = "oauth:c6gx9m317pcrgro5hkyj0x4c1hwrqo"
+    password = "oauth:h11vzdyclft7lhswf04d8nf1u4ckij"
     url = "ws://irc-ws.chat.twitch.tv:80"
 
     async with websockets.connect(url) as websocket:

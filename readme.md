@@ -12,6 +12,15 @@ websockets
 ```
 pip install websockets
 ```
+Elastic Stack
+```
+https://www.elastic.co/guide/en/elastic-stack/current/installing-elastic-stack.html
+```
+
+Start Elastic Stack
+```
+.elasticsearch/bin/elasticsearch
+```
 
 Start kafka
 ===========
