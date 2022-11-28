@@ -4,13 +4,11 @@ kafka
 ```
 https://kafka.apache.org/downloads
 ```
-kafka-python
+Python modules
 ```
 pip install kafka-python
-```
-websockets
-```
 pip install websockets
+pip install elasticsearch
 ```
 Elastic Stack
 ```
