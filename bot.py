@@ -1,5 +1,6 @@
 import asyncio
 import websockets
+import base64
 from kafka import KafkaProducer
 
 
@@ -36,12 +37,8 @@ async def handler(websocket):
                 if message[1] == 'PRIVMSG':
                     chatUser = message[2][0]
                     chatMessage = message[2][1]
-                    badRate = 0
-                    for badword in badwords:
-                        if badword in chatMessage:
-                            badRate += 1
 
-                    producer.send(topic, bytes(chatUser + " # " + chatMessage + " # " + str(badRate), 'utf-8'))
+                    producer.send(topic, bytes(chatUser + " " + chatMessage, 'utf-8'))
 
 
 async def main() -> None:
