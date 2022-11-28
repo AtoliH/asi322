@@ -1,10 +1,12 @@
 from kafka import KafkaConsumer
 import json
 import re
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 topic="asi322"
 liste_file="badwords.txt"
 consumer = KafkaConsumer(topic, bootstrap_servers=['localhost:9092'])
+analyzer=SentimentIntensityAnalyzer()
 
 if __name__ == "__main__":
     with open(liste_file,"r") as badwords_file:
@@ -19,4 +21,6 @@ if __name__ == "__main__":
                 if re.compile(r'\b({0})\b'.format(word), flags=re.IGNORECASE).search(msg['message']):
                     msg['badwords']+=1
                     print(word)
+            vs=analyzer.polarity_scores(msg['message'])
+            msg['vs']=vs
             print(msg)
