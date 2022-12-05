@@ -25,8 +25,8 @@ Start Elastic Stack
 Start kafka
 ===========
 ```
-./kafka/bin/zookeeper-server-start.sh config/zookeeper.properties
-./kafka/bin/kafka-server-start.sh config/server.properties
+./kafka/bin/zookeeper-server-start.sh kafka/config/zookeeper.properties
+./kafka/bin/kafka-server-start.sh kafka/config/server.properties
 ./kafka/bin/kafka-topics.sh --create --topic asi322 --bootstrap-server localhost:9092
 ```
 
