@@ -19,7 +19,7 @@ https://www.elastic.co/guide/en/elastic-stack/current/installing-elastic-stack.h
 
 Start Elastic Stack
 ```
-.elasticsearch/bin/elasticsearch
+./elasticsearch/bin/elasticsearch
 ```
 
 Start kafka
@@ -27,7 +27,7 @@ Start kafka
 ```
 ./kafka/bin/zookeeper-server-start.sh config/zookeeper.properties
 ./kafka/bin/kafka-server-start.sh config/server.properties
-./kafkabin/kafka-topics.sh --create --topic asi322 --bootstrap-server localhost:9092
+./kafka/bin/kafka-topics.sh --create --topic asi322 --bootstrap-server localhost:9092
 ```
 
 Start consumer
