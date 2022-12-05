@@ -25,15 +25,16 @@ Start Elastic Stack
 Start kafka
 ===========
 ```
-bin/zookeeper-server-start.sh config/zookeeper.properties
-bin/kafka-server-start.sh config/server.properties
-bin/kafka-topics.sh --create --topic asi322 --bootstrap-server localhost:9092
+./kafka/bin/zookeeper-server-start.sh config/zookeeper.properties
+./kafka/bin/kafka-server-start.sh config/server.properties
+./kafkabin/kafka-topics.sh --create --topic asi322 --bootstrap-server localhost:9092
 ```
 
 Start consumer
 ==============
 ```
-bin/kafka-console-consumer.sh --topic asi322 --from-beginning --bootstrap-server localhost:9092
+./kafka/bin/kafka-console-consumer.sh --topic asi322 --from-beginning --bootstrap-server localhost:9092
+python3 consumer.py
 ```
 
 Start producer (twitch bot)
