@@ -1,10 +1,15 @@
 from kafka import KafkaConsumer
-from elasticsearch import ElasticSearch
+from elasticsearch import Elasticsearch
 import json
 import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-es = ElasticSearch()
+# elastic config
+es = Elasticsearch(
+    "https://localhost:9200",
+    ca_certs="./elasticsearch-8.5.2/config/certs/http_ca.crt",
+    basic_auth=("elastic", "elastic")
+)
 topic = "asi322"
 liste_file = "badwords.txt"
 consumer = KafkaConsumer(topic, bootstrap_servers=['localhost:9092'])
@@ -15,6 +20,7 @@ def send_to_elastic(message):
 
 if __name__ == "__main__":
     with open(liste_file, "r") as badwords_file:
+        print("Initialization success !")
         badwords = badwords_file.read().splitlines()
         for message in consumer:
             msg = json.loads(message.value.decode("utf-8"))

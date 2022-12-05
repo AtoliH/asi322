@@ -43,18 +43,18 @@ async def handler(websocket):
 
 async def main() -> None:
     account = "asi322"
-    password = "oauth:h11vzdyclft7lhswf04d8nf1u4ckij"
+    password = "qz0c0xytsxsqe9die1n9k5kb0bd51o"
     url = "ws://irc-ws.chat.twitch.tv:80"
 
     # Fetch live channels
     channels = requests.get("https://api.twitch.tv/helix/streams", headers={
-        "Authorization": "Bearer h11vzdyclft7lhswf04d8nf1u4ckij",
+        "Authorization": "Bearer " + password,
         "Client-Id": "0ahgkrb8ju27rj3xl01iin1emkixne"
     }).json()["data"]
 
 
     async with websockets.connect(url) as websocket:
-        await websocket.send("PASS " + password)
+        await websocket.send("PASS oauth:" + password)
         await websocket.send("NICK " + account)
         for channel in channels:
             await websocket.send("JOIN #" + channel["user_login"])
