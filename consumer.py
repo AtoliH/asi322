@@ -1,6 +1,6 @@
 from kafka import KafkaConsumer
 from elasticsearch import Elasticsearch
-import requests
+from translate import Translator
 import json
 import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
@@ -33,6 +33,7 @@ if __name__ == "__main__":
         for message in consumer:
             msg = json.loads(message.value.decode("utf-8"))
             msg['user'] = msg['user'].split('!')[0]
+            msg['channel'] = msg['channel'][1:]
 
             # Find badwords in message
             msg['badwords'] = []
@@ -40,13 +41,10 @@ if __name__ == "__main__":
                 if re.compile(r'\b({0})\b'.format(word), flags=re.IGNORECASE).search(msg['message']):
                     msg['badwords'].append(word)
 
-            # Get channel info (too slow)
-            channel = msg['channel'][1:]
-            url = "https://api.twitch.tv/helix/users?login=" + str(channel)
-            channel_id = requests.get(url, headers=headers).json()["data"][0]["id"]
-            url = "https://api.twitch.tv/helix/channels?broadcaster_id=" + str(channel_id)
-            channel_data = requests.get(url, headers=headers).json()["data"][0]
-            msg['channel'] = channel_data
+            # Translate message to en
+            translator = Translator(to_lang="en")
+            translation = translator.translate(msg['message'])
+            msg['translate_en'] = translation
 
             vs = analyzer.polarity_scores(msg['message'])
             msg['vs'] = vs
