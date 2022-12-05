@@ -47,7 +47,10 @@ async def main() -> None:
     url = "ws://irc-ws.chat.twitch.tv:80"
 
     # Fetch live channels
-    channels = requests.get("https://api.twitch.tv/helix/streams", headers={
+    language = "en"
+    channels_count = 100
+    streams_url = "https://api.twitch.tv/helix/streams?language=" + language + "&first=" + str(channels_count)
+    channels = requests.get(streams_url, headers={
         "Authorization": "Bearer " + password,
         "Client-Id": "0ahgkrb8ju27rj3xl01iin1emkixne"
     }).json()["data"]
