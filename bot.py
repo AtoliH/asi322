@@ -42,9 +42,13 @@ async def handler(websocket):
 
 
 async def main() -> None:
-    account = "asi322"
-    password = "qz0c0xytsxsqe9die1n9k5kb0bd51o"
-    url = "ws://irc-ws.chat.twitch.tv:80"
+    f=open("config.json","r")
+    config = json.loads(f.read())
+    f.close()
+
+    account = config['twitch_bot']['account']
+    password = config['twitch_bot']['token']
+    url = config['twitch_bot']['url']
 
     # Fetch live channels
     language = "en"
@@ -52,7 +56,7 @@ async def main() -> None:
     streams_url = "https://api.twitch.tv/helix/streams?language=" + language + "&first=" + str(channels_count)
     channels = requests.get(streams_url, headers={
         "Authorization": "Bearer " + password,
-        "Client-Id": "0ahgkrb8ju27rj3xl01iin1emkixne"
+        "Client-Id": config['twitch_bot']['Client_Id']
     }).json()["data"]
 
 
