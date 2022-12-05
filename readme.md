@@ -19,21 +19,22 @@ https://www.elastic.co/guide/en/elastic-stack/current/installing-elastic-stack.h
 
 Start Elastic Stack
 ```
-.elasticsearch/bin/elasticsearch
+./elasticsearch/bin/elasticsearch
 ```
 
 Start kafka
 ===========
 ```
-bin/zookeeper-server-start.sh config/zookeeper.properties
-bin/kafka-server-start.sh config/server.properties
-bin/kafka-topics.sh --create --topic asi322 --bootstrap-server localhost:9092
+./kafka/bin/zookeeper-server-start.sh kafka/config/zookeeper.properties
+./kafka/bin/kafka-server-start.sh kafka/config/server.properties
+./kafka/bin/kafka-topics.sh --create --topic asi322 --bootstrap-server localhost:9092
 ```
 
 Start consumer
 ==============
 ```
-bin/kafka-console-consumer.sh --topic asi322 --from-beginning --bootstrap-server localhost:9092
+./kafka/bin/kafka-console-consumer.sh --topic asi322 --from-beginning --bootstrap-server localhost:9092
+python3 consumer.py
 ```
 
 Start producer (twitch bot)
