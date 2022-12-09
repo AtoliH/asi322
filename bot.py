@@ -80,10 +80,15 @@ async def main() -> None:
     
     channels_url = "https://api.twitch.tv/helix/channels?broadcaster_id="
     for id in channels_login_to_id:
-        channels_detail[id] = requests.get(channels_url + id, headers={
+        resp = requests.get(channels_url + id, headers={
             "Authorization": "Bearer " + password,
             "Client-Id": config['twitch_bot']['Client_Id']
-        }).json()["data"]
+        }).json()
+        try:
+            channels_detail[id] = resp['data']
+        except:
+            print(resp)
+            quit()
 
     async with websockets.connect(url) as websocket:
         await websocket.send("PASS oauth:" + password)
