@@ -6,8 +6,8 @@
     },
     "twitch_bot":{
         "account":"asi322",
-        "token":"08q7pnik40y1x5lgaxlkmdeioa4t2f",
+        "token":"y3r6q5syfgnkn8ldbx0lenhi83p4mb",
         "url":"ws://irc-ws.chat.twitch.tv:80",
-        "Client_Id":"0ahgkrb8ju27rj3xl01iin1emkixne"
+        "Client_Id":"2qwd0zoxixdweepiwmeo1361y17yhu"
     }
 }
