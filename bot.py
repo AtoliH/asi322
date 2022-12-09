@@ -33,7 +33,6 @@ async def handler(websocket):
     topic = "asi322"
     producer = KafkaProducer(bootstrap_servers='localhost:9092')
     while True:
-        try :
             rawIrcMessage = (await websocket.recv()).strip()
             rawMessages = rawIrcMessage.split('\r\n')
             for rawMessage in rawMessages:
@@ -51,8 +50,6 @@ async def handler(websocket):
                         'date': datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
                         'details': details
                         }), 'utf-8'))
-        except Exception :
-            print(traceback.format_exc())
 
 
 async def main() -> None:
@@ -104,5 +101,7 @@ async def main() -> None:
         await handler(websocket)
 
 if __name__ == "__main__":
-    asyncio.run(main())
-
+    try:
+        asyncio.run(main())
+    except Exception:
+        traceback.format_exc()
