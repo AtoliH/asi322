@@ -79,13 +79,13 @@ async def main() -> None:
         channels_login_to_id[channel['user_login']] = channel['user_id']
     
     channels_url = "https://api.twitch.tv/helix/channels?broadcaster_id="
-    for id in channels_login_to_id:
-        resp = requests.get(channels_url + id, headers={
+    for login in channels_login_to_id:
+        resp = requests.get(channels_url + channels_login_to_id[login], headers={
             "Authorization": "Bearer " + password,
             "Client-Id": config['twitch_bot']['Client_Id']
         }).json()
         try:
-            channels_detail[id] = resp['data']
+            channels_detail[channels_login_to_id[login]] = resp['data']
         except:
             print(resp)
             quit()
