@@ -1,3 +1,4 @@
+import datetime
 from kafka import KafkaConsumer
 from elasticsearch import Elasticsearch
 from translate import Translator
@@ -16,7 +17,7 @@ es = Elasticsearch(
 )
 topic = "asi322"
 liste_file = "badwords.txt"
-consumer = KafkaConsumer(topic, bootstrap_servers=['localhost:9092'])
+consumer = KafkaConsumer(topic, bootstrap_servers=['localhost:9092'], client_id=datetime.datetime.now().strftime("%H:%M:%S:f"), group_id="group_asi322")
 analyzer=SentimentIntensityAnalyzer()
 
 def send_to_elastic(message):
