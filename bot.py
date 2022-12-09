@@ -1,5 +1,6 @@
 #!/bin/python
 import asyncio
+import datetime
 import websockets
 import requests
 import json
@@ -39,7 +40,12 @@ async def handler(websocket):
                 channel = message[2][0]
                 chatMessage = message[2][1]
 
-                producer.send(topic, bytes(json.dumps({'channel': channel, 'user': chatUser, 'message': chatMessage}), 'utf-8'))
+                producer.send(topic, bytes(json.dumps({
+                    'channel': channel, 
+                    'user': chatUser, 
+                    'message': chatMessage,
+                    'timestamp': datetime.datetime.now(),
+                    }), 'utf-8'))
 
 
 async def main() -> None:
