@@ -21,7 +21,7 @@ def send_to_elastic(message):
 
 if __name__ == "__main__":
     account = "asi322"
-    password = "qz0c0xytsxsqe9die1n9k5kb0bd51o"
+    password = "08q7pnik40y1x5lgaxlkmdeioa4t2f"
     headers = {
                 "Authorization": "Bearer " + password,
                 "Client-Id": "0ahgkrb8ju27rj3xl01iin1emkixne"
