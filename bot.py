@@ -7,6 +7,8 @@ import requests
 import json
 from kafka import KafkaProducer
 
+channels_login_to_id = {}
+channels_detail = {}
 
 def parsemsg(s):
     """Breaks a message from an IRC server into its prefix, command, and arguments.
@@ -41,13 +43,13 @@ async def handler(websocket):
                     chatUser = message[0]
                     channel = message[2][0][1:]
                     chatMessage = message[2][1]
-
+                    details = channels_detail[channels_login_to_id[channel]]
                     producer.send(topic, bytes(json.dumps({
                         'channel': channel, 
                         'user': chatUser, 
                         'message': chatMessage,
                         'date': datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
-
+                        'details': details
                         }), 'utf-8'))
         except Exception :
             print(traceback.format_exc())
@@ -72,6 +74,16 @@ async def main() -> None:
         "Client-Id": config['twitch_bot']['Client_Id']
     }).json()["data"]
 
+
+    for channel in channels:
+        channels_login_to_id[channel['user_login']] = channel['user_id']
+    
+    channels_url = "https://api.twitch.tv/helix/channels?broadcaster_id="
+    for id in channels_login_to_id:
+        channels_detail[id] = requests.get(channels_url + id, headers={
+            "Authorization": "Bearer " + password,
+            "Client-Id": config['twitch_bot']['Client_Id']
+        }).json()["data"]
 
     async with websockets.connect(url) as websocket:
         await websocket.send("PASS oauth:" + password)
