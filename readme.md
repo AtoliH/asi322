@@ -30,8 +30,13 @@ Start kafka
 ./kafka/bin/kafka-topics.sh --create --topic asi322 --bootstrap-server localhost:9092 --partitions 4 --replication-factor 1
 ```
 
-Start consumer
+Start consumers
 ==============
+```
+for i in 1_12 do; python3 consumer.py & > log_consumer$i.txt 2>&1; done;
+```
+
+Start test consumer
 ```
 ./kafka/bin/kafka-console-consumer.sh --topic asi322 --from-beginning --bootstrap-server localhost:9092
 python3 consumer.py

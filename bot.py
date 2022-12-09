@@ -1,6 +1,7 @@
 #!/bin/python
 import asyncio
 import datetime
+import traceback
 import websockets
 import requests
 import json
@@ -30,23 +31,26 @@ async def handler(websocket):
     topic = "asi322"
     producer = KafkaProducer(bootstrap_servers='localhost:9092')
     while True:
-        rawIrcMessage = (await websocket.recv()).strip()
-        rawMessages = rawIrcMessage.split('\r\n')
-        for rawMessage in rawMessages:
-            message = parsemsg(rawMessage)
-            print(message)
-            if message[1] == 'PRIVMSG':
-                chatUser = message[0]
-                channel = message[2][0]
-                chatMessage = message[2][1]
+        try :
+            rawIrcMessage = (await websocket.recv()).strip()
+            rawMessages = rawIrcMessage.split('\r\n')
+            for rawMessage in rawMessages:
+                message = parsemsg(rawMessage)
+                print(message)
+                if message[1] == 'PRIVMSG':
+                    chatUser = message[0]
+                    channel = message[2][0][1:]
+                    chatMessage = message[2][1]
 
-                producer.send(topic, bytes(json.dumps({
-                    'channel': channel, 
-                    'user': chatUser, 
-                    'message': chatMessage,
-                    'date': datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
+                    producer.send(topic, bytes(json.dumps({
+                        'channel': channel, 
+                        'user': chatUser, 
+                        'message': chatMessage,
+                        'date': datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
 
-                    }), 'utf-8'))
+                        }), 'utf-8'))
+        except Exception :
+            print(traceback.format_exc())
 
 
 async def main() -> None:
@@ -61,7 +65,8 @@ async def main() -> None:
     # Fetch live channels
     language = "en"
     channels_count = 100
-    streams_url = "https://api.twitch.tv/helix/streams?language=" + language + "&first=" + str(channels_count)
+    # streams_url = "https://api.twitch.tv/helix/streams?language=" + language + "&first=" + str(channels_count)
+    streams_url = "https://api.twitch.tv/helix/streams?" + "first=" + str(channels_count)
     channels = requests.get(streams_url, headers={
         "Authorization": "Bearer " + password,
         "Client-Id": config['twitch_bot']['Client_Id']
@@ -77,7 +82,5 @@ async def main() -> None:
         await handler(websocket)
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except:
-       print("ça a crash... MAIS JE REDEMARRE")
+    asyncio.run(main())
+

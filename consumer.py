@@ -37,20 +37,20 @@ if __name__ == "__main__":
         for message in consumer:
             msg = json.loads(message.value.decode("utf-8"))
             msg['user'] = msg['user'].split('!')[0]
-            msg['channel'] = msg['channel'][1:]
-
-            # Find badwords in message
-            msg['badwords'] = []
-            for word in badwords:
-                if re.compile(r'\b({0})\b'.format(word), flags=re.IGNORECASE).search(msg['message']):
-                    msg['badwords'].append(word)
+            msg['channel'] = msg['channel']
 
             # Translate message to en
             translator = Translator(to_lang="en")
             translation = translator.translate(msg['message'])
             msg['translate_en'] = translation
 
-            vs = analyzer.polarity_scores(msg['message'])
+            # Find badwords in message
+            msg['badwords'] = []
+            for word in badwords:
+                if re.compile(r'\b({0})\b'.format(word), flags=re.IGNORECASE).search(msg['translate_en']):
+                    msg['badwords'].append(word)
+            
+            vs = analyzer.polarity_scores(msg['translate_en'])
             msg['vs'] = vs
             send_to_elastic(msg)
             print(msg)
