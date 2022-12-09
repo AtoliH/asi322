@@ -44,7 +44,7 @@ async def handler(websocket):
                     'channel': channel, 
                     'user': chatUser, 
                     'message': chatMessage,
-                    'timestamp': str(datetime.datetime.now()),
+                    'timestamp': datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S:%f"),
                     }), 'utf-8'))
 
 
