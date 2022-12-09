@@ -104,4 +104,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except Exception:
-        traceback.format_exc()
+        print(traceback.format_exc())
