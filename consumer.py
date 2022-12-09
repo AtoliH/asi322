@@ -5,11 +5,14 @@ import json
 import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
+f=open("config.json","r")
+config = json.loads(f.read())
+f.close()
 # elastic config
 es = Elasticsearch(
     "https://localhost:9200",
-    ca_certs="./elasticsearch-8.5.2/config/certs/http_ca.crt",
-    basic_auth=("elastic", "elastic")
+    ca_certs=config['elastic']['ca_certs'],
+    basic_auth=(config['elastic']['user'], config['elastic']['password'])
 )
 topic = "asi322"
 liste_file = "badwords.txt"
@@ -20,11 +23,11 @@ def send_to_elastic(message):
     resp = es.index(index="asi322", document=message)
 
 if __name__ == "__main__":
-    account = "asi322"
-    password = "08q7pnik40y1x5lgaxlkmdeioa4t2f"
+    account = config['twitch_bot']['account']
+    password = config['twitch_bot']['token']
     headers = {
                 "Authorization": "Bearer " + password,
-                "Client-Id": "0ahgkrb8ju27rj3xl01iin1emkixne"
+                "Client-Id": config['twitch_bot']['Client_Id']
             }
 
     with open(liste_file, "r") as badwords_file:

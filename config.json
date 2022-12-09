@@ -2,7 +2,7 @@
     "elastic":{
         "user":"elastic",
         "password":"elastic",
-        "ca_certs":"./elasticsearch-8.5.2/config/certs/http_ca.crt"
+        "ca_certs":"./http_ca.crt"
     },
     "twitch_bot":{
         "account":"asi322",
