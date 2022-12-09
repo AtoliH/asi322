@@ -43,7 +43,7 @@ async def handler(websocket):
                     chatUser = message[0]
                     channel = message[2][0][1:]
                     chatMessage = message[2][1]
-                    details = channels_detail[channels_login_to_id[channel]]
+                    details = channels_detail[channels_login_to_id[channel]][0]
                     producer.send(topic, bytes(json.dumps({
                         'channel': channel, 
                         'user': chatUser, 
