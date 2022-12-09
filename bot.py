@@ -69,10 +69,15 @@ async def main() -> None:
     channels_count = 100
     # streams_url = "https://api.twitch.tv/helix/streams?language=" + language + "&first=" + str(channels_count)
     streams_url = "https://api.twitch.tv/helix/streams?" + "first=" + str(channels_count)
-    channels = requests.get(streams_url, headers={
+    resp = requests.get(streams_url, headers={
         "Authorization": "Bearer " + password,
         "Client-Id": config['twitch_bot']['Client_Id']
     }).json()["data"]
+    try:
+        channels = resp['data']
+    except:
+        print(resp)
+        quit()
 
 
     for channel in channels:
