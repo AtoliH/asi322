@@ -1,4 +1,5 @@
 import datetime
+import sys
 from kafka import KafkaConsumer
 from elasticsearch import Elasticsearch
 from translate import Translator
