@@ -39,10 +39,13 @@ if __name__ == "__main__":
             msg['user'] = msg['user'].split('!')[0]
             msg['channel'] = msg['channel']
 
-            # Translate message to en
-            translator = Translator(to_lang="en")
-            translation = translator.translate(msg['message'])
-            msg['translate_en'] = translation
+            if msg['details']['broadcaster_language']!="en":
+                # Translate message to en
+                translator = Translator(to_lang="en",from_lang=msg['details']['broadcaster_language'])
+                translation = translator.translate(msg['message'])
+                msg['translate_en'] = translation
+            else:
+                msg['translate_en'] = msg['message']
 
             # Find badwords in message
             msg['badwords'] = []
