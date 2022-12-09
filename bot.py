@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/python
 import asyncio
 import websockets
 import requests
