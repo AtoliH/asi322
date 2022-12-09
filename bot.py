@@ -77,7 +77,7 @@ async def main() -> None:
         await handler(websocket)
 
 if __name__ == "__main__":
-    #try:
+    try:
         asyncio.run(main())
-    #except:
-    #    print("ça a crash... MAIS JE REDEMARRE")
+    except:
+       print("ça a crash... MAIS JE REDEMARRE")
