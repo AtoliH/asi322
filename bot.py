@@ -72,7 +72,7 @@ async def main() -> None:
     resp = requests.get(streams_url, headers={
         "Authorization": "Bearer " + password,
         "Client-Id": config['twitch_bot']['Client_Id']
-    }).json()["data"]
+    }).json()
     try:
         channels = resp['data']
     except:
