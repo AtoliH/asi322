@@ -51,6 +51,7 @@ async def fetch_channels(account, password, url, client_id):
 
     channels_url = "https://api.twitch.tv/helix/channels?broadcaster_id="
     for login in channels_login_to_id:
+        print("Fetching " + login + " channel info...")
         resp = requests.get(channels_url + channels_login_to_id[login], headers={
             "Authorization": "Bearer " + password,
             "Client-Id": client_id
