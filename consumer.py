@@ -5,6 +5,7 @@ from elasticsearch import Elasticsearch
 from translate import Translator
 import json
 import re
+import os
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 f = open("config.json", "r")
@@ -27,6 +28,8 @@ def send_to_elastic(message):
 
 
 if __name__ == "__main__":
+    print("PID: " + str(os.getpid()))
+
     account = config['twitch_bot']['account']
     password = config['twitch_bot']['token']
     headers = {
