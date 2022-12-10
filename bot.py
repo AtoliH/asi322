@@ -6,6 +6,8 @@ import websockets
 import requests
 import aiohttp
 import json
+import subprocess
+import os
 from kafka import KafkaProducer
 
 channels_login_to_id = {}
@@ -40,11 +42,7 @@ async def fetch_channels(websocket, account, password, client_id):
             "Authorization": "Bearer " + password,
             "Client-Id": client_id
         }).json()
-        try:
-            channels = resp['data']
-        except:
-            print(resp)
-            quit()
+        channels = resp['data']
 
         for channel in channels:
             channels_login_to_id[channel['user_login']] = channel['user_id']
@@ -59,15 +57,12 @@ async def fetch_channels(websocket, account, password, client_id):
                 }) as response:
                     resp = (await response.json())
 
-                try:
-                    channels_detail[channels_login_to_id[login]] = resp['data']
-                except:
-                    print(resp)
+                channels_detail[channels_login_to_id[login]] = resp['data']
 
         for channel in channels:
             await websocket.send("JOIN #" + channel["user_login"])
 
-        await asyncio.sleep(10)
+        await asyncio.sleep(300)
 
 
 async def handler(websocket):
@@ -94,12 +89,31 @@ async def handler(websocket):
 
 
 async def main() -> None:
+    # Get token from token file
+    token_file = open("token.json", "r")
+    token_data = json.loads(token_file.read())
+    token_file.close()
+
+    refresh_token = token_data["refresh_token"]
+    access_token = token_data["access_token"]
+    expires_in = token_data["expires_in"]
+
+    if datetime.datetime.now().timestamp() - os.path.getmtime("token.json") > expires_in - 60:
+        # If token has expired, refresh it and get the new one
+        with open("token.json", "w") as outfile:
+            subprocess.run("bash refresh.sh " + refresh_token, stdout=outfile)
+
+        token_file = open("token.json", "r")
+        token_data = json.loads(token_file.read())
+        token_file.close()
+        access_token = token_data["access_token"]
+
     f = open("config.json", "r")
     config = json.loads(f.read())
     f.close()
 
     account = config['twitch_bot']['account']
-    password = config['twitch_bot']['token']
+    password = access_token
     url = config['twitch_bot']['url']
     client_id = config['twitch_bot']['Client_Id']
 
