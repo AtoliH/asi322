@@ -31,7 +31,7 @@ def parsemsg(s):
     return prefix, command, args
 
 
-def fetch_channels(account, password, url, client_id):
+async def fetch_channels(account, password, url, client_id):
     # Fetch live channels
     channels_count = 100
     # streams_url = "https://api.twitch.tv/helix/streams?first=" + str(channels_count)
@@ -102,7 +102,7 @@ async def main() -> None:
     url = config['twitch_bot']['url']
     client_id = config['twitch_bot']['Client_Id']
 
-    websocket = fetch_channels(account, password, url, client_id)
+    websocket = await fetch_channels(account, password, url, client_id)
 
     while True:
         try:
