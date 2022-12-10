@@ -1,7 +1,6 @@
 #!/bin/python
 import asyncio
 import datetime
-import sys
 import traceback
 import websockets
 import requests
@@ -31,10 +30,9 @@ def parsemsg(s):
     return prefix, command, args
 
 
-async def fetch_channels(account, password, url, client_id):
+async def fetch_channels(websocket, account, password, client_id):
     # Fetch live channels
-    channels_count = 100
-    # streams_url = "https://api.twitch.tv/helix/streams?first=" + str(channels_count)
+    channels_count = 5
     streams_url = "https://api.twitch.tv/helix/streams?" + "first=" + str(channels_count)
     resp = requests.get(streams_url, headers={
         "Authorization": "Bearer " + password,
@@ -62,32 +60,30 @@ async def fetch_channels(account, password, url, client_id):
             print(resp)
             quit()
 
-    async with websockets.connect(url) as websocket:
-        await websocket.send("PASS oauth:" + password)
-        await websocket.send("NICK " + account)
-        for channel in channels:
-            await websocket.send("JOIN #" + channel["user_login"])
-        return websocket
+    await websocket.send("PASS oauth:" + password)
+    await websocket.send("NICK " + account)
+    for channel in channels:
+        await websocket.send("JOIN #" + channel["user_login"])
 
 
 async def handler(websocket):
     topic = "asi322"
     producer = KafkaProducer(bootstrap_servers='localhost:9092')
     while True:
-        rawIrcMessage = (await websocket.recv()).strip()
-        rawMessages = rawIrcMessage.split('\r\n')
-        for rawMessage in rawMessages:
+        raw_irc_message = (await websocket.recv()).strip()
+        raw_messages = raw_irc_message.split('\r\n')
+        for rawMessage in raw_messages:
             message = parsemsg(rawMessage)
             print(message)
             if message[1] == 'PRIVMSG':
-                chatUser = message[0]
+                chat_user = message[0]
                 channel = message[2][0][1:]
-                chatMessage = message[2][1]
+                chat_message = message[2][1]
                 details = channels_detail[channels_login_to_id[channel]][0]
                 producer.send(topic, bytes(json.dumps({
                     'channel': channel,
-                    'user': chatUser,
-                    'message': chatMessage,
+                    'user': chat_user,
+                    'message': chat_message,
                     'date': datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
                     'details': details
                 }), 'utf-8'))
@@ -103,19 +99,22 @@ async def main() -> None:
     url = config['twitch_bot']['url']
     client_id = config['twitch_bot']['Client_Id']
 
-    print("Fetching channels...")
-    websocket = await fetch_channels(account, password, url, client_id)
-    print("Channels fetched!")
+    async with websockets.connect(url) as websocket:
+        print("Fetching channels...")
+        await fetch_channels(websocket, account, password, client_id)
+        print("Channels fetched!")
 
-    print("Now handling messages...")
-    while True:
-        try:
-            await handler(websocket)
-        except Exception:
-            print(traceback.format_exc())
+        print("Now handling messages...")
+        while True:
+            # noinspection PyBroadException
+            try:
+                await handler(websocket)
+            except Exception:
+                print(traceback.format_exc())
 
 
 if __name__ == "__main__":
+    # noinspection PyBroadException
     try:
         asyncio.run(main())
     except Exception:
