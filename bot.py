@@ -36,7 +36,7 @@ def parsemsg(s):
 async def fetch_channels(websocket, account, password, client_id):
     while True:
         # Fetch live channels
-        channels_count = 5
+        channels_count = 100
         streams_url = "https://api.twitch.tv/helix/streams?" + "first=" + str(channels_count)
         resp = requests.get(streams_url, headers={
             "Authorization": "Bearer " + password,
