@@ -18,7 +18,7 @@ es = Elasticsearch(
 )
 topic = "asi322"
 liste_file = "badwords.txt"
-consumer = KafkaConsumer(topic, bootstrap_servers=['localhost:9092'], client_id=sys.args[1], group_id="group_asi322")
+consumer = KafkaConsumer(topic, bootstrap_servers=['localhost:9092'], client_id=sys.argv[1], group_id="group_asi322")
 analyzer=SentimentIntensityAnalyzer()
 
 def send_to_elastic(message):

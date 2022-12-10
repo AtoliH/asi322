@@ -1,5 +1,4 @@
-for i in {1..12}
+for i in {1..32}
 do
-  python3 consumer.py 1 &
-  sleep 1
+    python3 consumer.py $i > log_consumer$i.txt 2>&1 &
 done
