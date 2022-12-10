@@ -102,8 +102,11 @@ async def main() -> None:
     url = config['twitch_bot']['url']
     client_id = config['twitch_bot']['Client_Id']
 
+    print("Fetching channels...")
     websocket = await fetch_channels(account, password, url, client_id)
+    print("Channels fetched!")
 
+    print("Now handling messages...")
     while True:
         try:
             await handler(websocket)
