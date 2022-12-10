@@ -72,7 +72,7 @@ async def fetch_channels(websocket, account, password, client_id):
 
 async def handler(websocket):
     topic = "asi322"
-    # producer = KafkaProducer(bootstrap_servers='localhost:9092')
+    producer = KafkaProducer(bootstrap_servers='localhost:9092')
     while True:
         raw_irc_message = (await websocket.recv()).strip()
         raw_messages = raw_irc_message.split('\r\n')
@@ -84,13 +84,13 @@ async def handler(websocket):
                 channel = message[2][0][1:]
                 chat_message = message[2][1]
                 details = channels_detail[channels_login_to_id[channel]][0]
-                # producer.send(topic, bytes(json.dumps({
-                #     'channel': channel,
-                #     'user': chat_user,
-                #     'message': chat_message,
-                #     'date': datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
-                #     'details': details
-                # }), 'utf-8'))
+                producer.send(topic, bytes(json.dumps({
+                    'channel': channel,
+                    'user': chat_user,
+                    'message': chat_message,
+                    'date': datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
+                    'details': details
+                }), 'utf-8'))
 
 
 async def main() -> None:
