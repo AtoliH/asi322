@@ -1,4 +1,3 @@
-import datetime
 import sys
 from kafka import KafkaConsumer
 from elasticsearch import Elasticsearch
@@ -6,29 +5,31 @@ from translate import Translator
 import json
 import re
 import os
+import traceback
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-f = open("config.json", "r")
-config = json.loads(f.read())
-f.close()
-# elastic config
-es = Elasticsearch(
-    "https://localhost:9200",
-    ca_certs=config['elastic']['ca_certs'],
-    basic_auth=(config['elastic']['user'], config['elastic']['password'])
-)
-topic = "asi322"
-liste_file = "badwords.txt"
-consumer = KafkaConsumer(topic, bootstrap_servers=['localhost:9092'], client_id=sys.argv[1], group_id="group_asi322")
-analyzer = SentimentIntensityAnalyzer()
 
-
-def send_to_elastic(message):
+def send_to_elastic(es, message):
     resp = es.index(index="asi322", document=message)
 
 
-if __name__ == "__main__":
+def main():
     print("PID: " + str(os.getpid()))
+
+    f = open("config.json", "r")
+    config = json.loads(f.read())
+    f.close()
+    # elastic config
+    es = Elasticsearch(
+        "https://localhost:9200",
+        ca_certs=config['elastic']['ca_certs'],
+        basic_auth=(config['elastic']['user'], config['elastic']['password'])
+    )
+    topic = "asi322"
+    liste_file = "badwords.txt"
+    consumer = KafkaConsumer(topic, bootstrap_servers=['localhost:9092'], client_id=sys.argv[1],
+                             group_id="group_asi322")
+    analyzer = SentimentIntensityAnalyzer()
 
     account = config['twitch_bot']['account']
     password = config['twitch_bot']['token']
@@ -61,5 +62,13 @@ if __name__ == "__main__":
 
             vs = analyzer.polarity_scores(msg['translate_en'])
             msg['vs'] = vs
-            send_to_elastic(msg)
+            send_to_elastic(es, msg)
             print(msg)
+
+
+if __name__ == "__main__":
+    while True:
+        try:
+            main()
+        except Exception:
+            print(traceback.format_exc())
