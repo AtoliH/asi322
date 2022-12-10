@@ -62,7 +62,7 @@ async def fetch_channels(websocket, account, password, client_id):
         for channel in channels:
             await websocket.send("JOIN #" + channel["user_login"])
 
-        await asyncio.sleep(300)
+        await asyncio.sleep(600)
 
 
 async def handler(websocket):
