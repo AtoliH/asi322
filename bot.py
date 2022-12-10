@@ -100,6 +100,7 @@ async def main() -> None:
 
     if datetime.datetime.now().timestamp() - os.path.getmtime("token.json") > expires_in - 60:
         # If token has expired, refresh it and get the new one
+        print("Refreshing twitch token...")
         with open("token.json", "w") as outfile:
             subprocess.run("bash refresh.sh " + refresh_token, stdout=outfile)
 
@@ -107,6 +108,7 @@ async def main() -> None:
         token_data = json.loads(token_file.read())
         token_file.close()
         access_token = token_data["access_token"]
+        print("Token refreshed, new token: " + access_token)
 
     f = open("config.json", "r")
     config = json.loads(f.read())
