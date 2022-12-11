@@ -10,7 +10,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 
 def send_to_elastic(es, message):
-    resp = es.index(index="asi322", document=message)
+    resp = es.index(index="asi322-standard", document=message)
 
 
 def main():
