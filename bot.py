@@ -92,7 +92,7 @@ async def main() -> None:
     # Always refresh token on startup
     print("Refreshing twitch token...")
     with open("token.json", "w") as outfile:
-        subprocess.run("bash refresh.sh", stdout=outfile)
+        subprocess.run("./refresh.sh", stdout=outfile)
 
     token_file = open("token.json", "r")
     token_data = json.loads(token_file.read())
