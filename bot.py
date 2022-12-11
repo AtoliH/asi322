@@ -89,26 +89,16 @@ async def handler(websocket):
 
 
 async def main() -> None:
-    # Get token from token file
+    # Always refresh token on startup
+    print("Refreshing twitch token...")
+    with open("token.json", "w") as outfile:
+        subprocess.run("bash refresh.sh", stdout=outfile)
+
     token_file = open("token.json", "r")
     token_data = json.loads(token_file.read())
     token_file.close()
-
-    refresh_token = token_data["refresh_token"]
     access_token = token_data["access_token"]
-    expires_in = token_data["expires_in"]
-
-    if datetime.datetime.now().timestamp() - os.path.getmtime("token.json") > expires_in - 60:
-        # If token has expired, refresh it and get the new one
-        print("Refreshing twitch token...")
-        with open("token.json", "w") as outfile:
-            subprocess.run("bash refresh.sh " + refresh_token, stdout=outfile)
-
-        token_file = open("token.json", "r")
-        token_data = json.loads(token_file.read())
-        token_file.close()
-        access_token = token_data["access_token"]
-        print("Token refreshed, new token: " + access_token)
+    print("Token refreshed, new token: " + access_token)
 
     f = open("config.json", "r")
     config = json.loads(f.read())
