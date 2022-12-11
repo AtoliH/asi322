@@ -48,7 +48,7 @@ def main():
 
             if msg['details']['broadcaster_language'] != "en":
                 # Translate message to en
-                translator = Translator(to_lang="en", from_lang=msg['details']['broadcaster_language'])
+                translator = Translator(provider="Google", to_lang="en", from_lang=msg['details']['broadcaster_language'])
                 translation = translator.translate(msg['message'])
                 msg['translate_en'] = translation
             else:
